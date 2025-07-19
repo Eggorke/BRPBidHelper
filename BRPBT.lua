@@ -189,7 +189,7 @@ end
 
 local function CreateItemRollFrame()
   local frame = CreateFrame("Frame", "ItemRollFrame", UIParent)
-  frame:SetWidth(300) -- Adjust size as needed
+  frame:SetWidth(450) -- Adjust size as needed
   frame:SetHeight(320)
   frame:SetPoint("CENTER",UIParent,"CENTER",0,0) -- Position at center of the parent frame
   frame:SetBackdrop({
@@ -605,7 +605,7 @@ end
 function itemRollFrame:ADDON_LOADED(addon)
   if addon ~= "BRPBT" then return end
  
-  -- if FrameShownDuration == nil then FrameShownDuration = 15 end
+  if FrameShownDuration == nil then FrameShownDuration = 15 end
   if FrameAutoClose == nil then FrameAutoClose = true end
   -- state.MLRollDuration = FrameShownDuration
 end

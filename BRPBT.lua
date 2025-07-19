@@ -605,7 +605,7 @@ end
 function itemRollFrame:ADDON_LOADED(addon)
   if addon ~= "BRPBT" then return end
  
-  if FrameShownDuration == nil then FrameShownDuration = 15 end
+  if FrameShownDuration == nil then FrameShownDuration = 30 end
   if FrameAutoClose == nil then FrameAutoClose = true end
   -- state.MLRollDuration = FrameShownDuration
 end

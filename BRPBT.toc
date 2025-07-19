@@ -1,0 +1,8 @@
+## Interface: 11200
+## Title: BRP Bid Tracker
+## Author: Eggorkus
+## Version: 1.0.0
+## Notes: Make loot rolls obvious
+## SavedVariables: FrameShownDuration, FrameAutoClose
+
+BRPBT.lua

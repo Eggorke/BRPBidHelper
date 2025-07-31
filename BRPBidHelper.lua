@@ -13,6 +13,7 @@
   osRollCap = 99,
   tmogRollCap = 50,
   MLRollDuration = 30,
+  minimumBid = "10",
   naxx = 0,
   kara = 0,
 }
@@ -265,15 +266,54 @@ end
 local function CreateInputFrame(frame)
   local editBox = CreateFrame("EditBox", "MyAddonEditBox", frame, "InputBoxTemplate")
   editBox:SetWidth(110)
-  editBox:SetHeight(30)
+  editBox:SetHeight(32)
   editBox:SetPoint("BOTTOM", frame, "BOTTOM", -65, 45)  -- Position in the middle of the screen
   editBox:SetAutoFocus(false) -- Don't auto-focus
   editBox:SetText("10")
 
   -- Optional: Script handlers
   editBox:SetScript("OnEnterPressed", function()
-      SendChatMessage(editBox:GetText(), "WHISPER", nil, state.masterLooter);
-      editBox:ClearFocus()
+    -- SendChatMessage(editBox:GetText(), "WHISPER", nil, state.masterLooter);
+    editBox:ClearFocus()
+  end)
+
+  editBox:SetScript("OnHide", function()
+    editBox:SetText("10")
+  end)
+
+  local button = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
+  button:SetWidth(50)
+  button:SetHeight(30)
+  button:SetPoint("BOTTOM", frame, "BOTTOM", 37, 45)
+
+  -- Set button text
+  button:SetText("Bid")
+  local font = button:GetFontString()
+  font:SetFont(FONT_NAME, FONT_SIZE, FONT_OUTLINE)
+
+  -- Add background 
+  local bg = button:CreateTexture(nil, "BACKGROUND")
+
+  button:SetScript("OnMouseDown", function(self)
+      bg:SetVertexColor(0.6, 0.6, 0.6, 1) -- Even lighter gray when pressed
+  end)
+
+  button:SetScript("OnMouseUp", function(self)
+      bg:SetVertexColor(0.4, 0.4, 0.4, 1) -- Lighter gray on release
+  end)
+
+  -- Add tooltip
+  button:SetScript("OnEnter", function(self)
+      bg:SetVertexColor(0.4, 0.4, 0.4, 1) -- Lighter gray on hover
+  end)
+
+  button:SetScript("OnLeave", function(self)
+      bg:SetVertexColor(0.2, 0.2, 0.2, 1) -- Dark gray when not hovered
+  end)
+
+  -- Add functionality to the button
+  button:SetScript("OnClick", function()
+    SendChatMessage(editBox:GetText(), "WHISPER", nil, state.masterLooter);
   end)
 end
 

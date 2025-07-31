@@ -13,10 +13,39 @@
   osRollCap = 99,
   tmogRollCap = 50,
   MLRollDuration = 30,
+  naxx = 0,
+  kara = 0,
 }
 
-local BUTTON_WIDTH = 32
-local BUTTON_COUNT = 4
+StaticPopupDialogs["CONFIRM_ALL_IN_NAXX"] = {
+  text = "Are you sure ebashish NAXX DKP?",
+  button1 = "Yes",
+  button2 = "Ne Ne Ne",
+  OnAccept = function()
+      SendChatMessage(state.naxx, "WHISPER", nil, state.masterLooter)
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3, -- Use a high number to avoid conflicts
+}
+
+StaticPopupDialogs["CONFIRM_ALL_IN_KARA"] = {
+  text = "Are you sure ebashish KARA DKP?",
+  button1 = "Yes",
+  button2 = "Ne Ne Ne",
+  OnAccept = function()
+      SendChatMessage(state.kara, "WHISPER", nil, state.masterLooter)
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3, -- Use a high number to avoid conflicts
+}
+
+local BUTTON_WIDTH = 120
+local BUTTON_HEIGHT = 32
+local BUTTON_COUNT = 2
 local BUTTON_PADING = 5
 local FONT_NAME = "Fonts\\FRIZQT__.TTF"
 local FONT_SIZE = 12
@@ -48,7 +77,7 @@ local LB_SET_ML = "ML set to "
 local LB_SET_ROLL_TIME = "Roll time set to "
 
 local function lb_print(msg)
-  DEFAULT_CHAT_FRAME:AddMessage("|c" .. colors.ADDON_TEXT_COLOR .. "BRPBT: " .. msg .. "|r")
+  DEFAULT_CHAT_FRAME:AddMessage("|c" .. colors.ADDON_TEXT_COLOR .. "BRPBidHelper: " .. msg .. "|r")
 end
 
 local function resetRolls()
@@ -187,10 +216,118 @@ local function CreateActionButton(frame, buttonText, tooltipText, index, onClick
   end)
 end
 
+local function CreateActionButtonNaxx(frame, buttonText, tooltipText, index)
+  local panelWidth = frame:GetWidth()
+  local spacing = (panelWidth - (BUTTON_COUNT * BUTTON_WIDTH)) / (BUTTON_COUNT + 1)
+  local button = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
+  button:SetWidth(BUTTON_WIDTH)
+  button:SetHeight(BUTTON_HEIGHT)
+  button:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", index*spacing + (index-1)*BUTTON_WIDTH, BUTTON_PADING)
+
+  -- Set button text
+  button:SetText(buttonText)
+  local font = button:GetFontString()
+  font:SetFont(FONT_NAME, FONT_SIZE, FONT_OUTLINE)
+
+  -- Add background 
+  local bg = button:CreateTexture(nil, "BACKGROUND")
+  -- bg:SetAllPoints(button)
+  -- bg:SetTexture(1, 1, 1, 1) -- White texture
+  -- bg:SetVertexColor(0.2, 0.2, 0.2, 1) -- Dark gray background
+
+  button:SetScript("OnMouseDown", function(self)
+      bg:SetVertexColor(0.6, 0.6, 0.6, 1) -- Even lighter gray when pressed
+  end)
+
+  button:SetScript("OnMouseUp", function(self)
+      bg:SetVertexColor(0.4, 0.4, 0.4, 1) -- Lighter gray on release
+  end)
+
+  -- Add tooltip
+  button:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+      GameTooltip:SetText(tooltipText, nil, nil, nil, nil, true)
+      bg:SetVertexColor(0.4, 0.4, 0.4, 1) -- Lighter gray on hover
+      GameTooltip:Show()
+  end)
+
+  button:SetScript("OnLeave", function(self)
+      bg:SetVertexColor(0.2, 0.2, 0.2, 1) -- Dark gray when not hovered
+      GameTooltip:Hide()
+  end)
+
+  -- Add functionality to the button
+  button:SetScript("OnClick", function()
+    StaticPopup_Show("CONFIRM_ALL_IN_NAXX")
+  end)
+end
+
+local function CreateInputFrame(frame)
+  local editBox = CreateFrame("EditBox", "MyAddonEditBox", frame, "InputBoxTemplate")
+  editBox:SetWidth(110)
+  editBox:SetHeight(30)
+  editBox:SetPoint("BOTTOM", frame, "BOTTOM", -65, 45)  -- Position in the middle of the screen
+  editBox:SetAutoFocus(false) -- Don't auto-focus
+  editBox:SetText("10")
+
+  -- Optional: Script handlers
+  editBox:SetScript("OnEnterPressed", function()
+      SendChatMessage(editBox:GetText(), "WHISPER", nil, state.masterLooter);
+      editBox:ClearFocus()
+  end)
+end
+
+local function CreateActionButtonKara(frame, buttonText, tooltipText, index)
+  local panelWidth = frame:GetWidth()
+  local spacing = (panelWidth - (BUTTON_COUNT * BUTTON_WIDTH)) / (BUTTON_COUNT + 1)
+  local button = CreateFrame("Button", nil, frame, "GameMenuButtonTemplate")
+  button:SetWidth(BUTTON_WIDTH)
+  button:SetHeight(BUTTON_HEIGHT)
+  button:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", index*spacing + (index-1)*BUTTON_WIDTH, BUTTON_PADING)
+
+  -- Set button text
+  button:SetText(buttonText)
+  local font = button:GetFontString()
+  font:SetFont(FONT_NAME, FONT_SIZE, FONT_OUTLINE)
+
+  -- Add background 
+  local bg = button:CreateTexture(nil, "BACKGROUND")
+  -- bg:SetAllPoints(button)
+  -- bg:SetTexture(1, 1, 1, 1) -- White texture
+  -- bg:SetVertexColor(0.2, 0.2, 0.2, 1) -- Dark gray background
+
+  button:SetScript("OnMouseDown", function(self)
+      bg:SetVertexColor(0.6, 0.6, 0.6, 1) -- Even lighter gray when pressed
+  end)
+
+  button:SetScript("OnMouseUp", function(self)
+      bg:SetVertexColor(0.4, 0.4, 0.4, 1) -- Lighter gray on release
+  end)
+
+  -- Add tooltip
+  button:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+      GameTooltip:SetText(tooltipText, nil, nil, nil, nil, true)
+      bg:SetVertexColor(0.4, 0.4, 0.4, 1) -- Lighter gray on hover
+      GameTooltip:Show()
+  end)
+
+  button:SetScript("OnLeave", function(self)
+      bg:SetVertexColor(0.2, 0.2, 0.2, 1) -- Dark gray when not hovered
+      GameTooltip:Hide()
+  end)
+
+  -- Add functionality to the button
+  button:SetScript("OnClick", function()
+    -- SendChatMessage(state.kara, "WHISPER", nil, state.masterLooter);
+    StaticPopup_Show("CONFIRM_ALL_IN_KARA")
+  end)
+end
+
 local function CreateItemRollFrame()
   local frame = CreateFrame("Frame", "ItemRollFrame", UIParent)
-  frame:SetWidth(450) -- Adjust size as needed
-  frame:SetHeight(320)
+  frame:SetWidth(300) -- Adjust size as needed
+  frame:SetHeight(220)
   frame:SetPoint("CENTER",UIParent,"CENTER",0,0) -- Position at center of the parent frame
   frame:SetBackdrop({
       bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -207,6 +344,9 @@ local function CreateItemRollFrame()
   frame:SetScript("OnDragStart", function () frame:StartMoving() end)
   frame:SetScript("OnDragStop", function () frame:StopMovingOrSizing() end)
   CreateCloseButton(frame)
+  CreateInputFrame(frame)
+  CreateActionButtonNaxx(frame, "ALL IN NAXX", "Bid ALL IN NAXX DKP", 1)
+  CreateActionButtonKara(frame, "ALL IN KARA", "Bid ALL IN KARA DKP", 2)
   frame:Hide()
 
   return frame
@@ -321,8 +461,8 @@ end
 
 local function CreateTextArea(frame)
   local textArea = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  textArea:SetFont("Interface\\AddOns\\BRPBT\\MonaspaceNeonFrozen-Regular.ttf", 12, "")
-  textArea:SetHeight(220)
+  textArea:SetFont("Interface\\AddOns\\BRPBidHelper\\MonaspaceNeonFrozen-Regular.ttf", 12, "")
+  textArea:SetHeight(100)
   -- textArea:SetWidth(150)
   textArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 5, -70)
   textArea:SetJustifyH("LEFT")
@@ -347,19 +487,29 @@ local function UpdateTextArea(frame)
     frame.textArea = CreateTextArea(frame)
   end
 
-  -- frame.textArea:SetTeClear()  -- Clear the existing messages
-  local text = ""
-  local colored_msg = ""
-  local count = 0
+  text = "Current Master Looter: " .. state.masterLooter .. "\n" .. "\n"
+  local bidderRank, note = getPlayerRank(UnitName("player"))
 
-  sortRolls()
+  local _,_,ep = string.find(note,".*{(%d+):%d+}.*")
+  local _,_,gp = string.find(note,".*{%d+:(%d+)}.*")
+  state.naxx = ep
+  state.kara = gp
+  
+  text = text .. "Your Rank: " .. bidderRank .. "\n"
+  text = text .. "Your NAXX DKP: " .. ep .. "\n"
+  text = text .. "Your KARA DKP: " .. gp
 
-  for i, v in ipairs(state.rollMessages) do
-    -- if count >= 9 then break end
-    colored_msg = v.msg
-    text = text .. formatMsg(v) .. "\n"
-    count = count + 1
-  end
+  -- local colored_msg = ""
+  -- local count = 0
+
+  -- sortRolls()
+
+  -- for i, v in ipairs(state.rollMessages) do
+  --   -- if count >= 9 then break end
+  --   colored_msg = v.msg
+  --   text = text .. formatMsg(v) .. "\n"
+  --   count = count + 1
+  -- end
 
   frame.textArea:SetText(text)
 end
@@ -581,29 +731,29 @@ function getPlayerRank(playerName)
   return "none", "{}"
 end
 
-function itemRollFrame:CHAT_MSG_WHISPER(message,sender)
-  if is_number(message) then
-    local bid = tonumber(message)
-    local bidder = sender
-    local bidderRank, note = getPlayerRank(bidder)
+-- function itemRollFrame:CHAT_MSG_WHISPER(message,sender)
+--   if is_number(message) then
+--     local bid = tonumber(message)
+--     local bidder = sender
+--     local bidderRank, note = getPlayerRank(bidder)
     
-    -- local unit = GetUnit(bidder)
-    -- lb_print(unit)
-    -- if unit == "none" then return end
+--     -- local unit = GetUnit(bidder)
+--     -- lb_print(unit)
+--     -- if unit == "none" then return end
 
-    -- local guild, rankstr, rankid = GetGuildInfo(bidder)
-    -- lb_print(rankstr)
+--     -- local guild, rankstr, rankid = GetGuildInfo(bidder)
+--     -- lb_print(rankstr)
 
-    local msg = { bidder = bidder, bid = bid, msg = message, class = GetClassOfRoller(bidder), bidderRank = bidderRank, note = note }
+--     local msg = { bidder = bidder, bid = bid, msg = message, class = GetClassOfRoller(bidder), bidderRank = bidderRank, note = note }
 
-    table.insert(state.rollMessages, msg)
+--     table.insert(state.rollMessages, msg)
 
-    UpdateTextArea(itemRollFrame)
-  end
-end
+--     UpdateTextArea(itemRollFrame)
+--   end
+-- end
 
 function itemRollFrame:ADDON_LOADED(addon)
-  if addon ~= "BRPBT" then return end
+  if addon ~= "BRPBidHelper" then return end
  
   if FrameShownDuration == nil then FrameShownDuration = 30 end
   if FrameAutoClose == nil then FrameAutoClose = true end
@@ -627,53 +777,3 @@ itemRollFrame:RegisterEvent("CHAT_MSG_WHISPER")
 itemRollFrame:SetScript("OnEvent", function ()
   itemRollFrame[event](itemRollFrame,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
 end)
-
--- Register the slash command
-SLASH_BRPBT1 = '/brpbt'
-SLASH_BRPBT2 = '/bt'
-
--- Command handler
-SlashCmdList["BRPBT"] = function(msg)
-  msg = string.lower(msg)
-  -- if msg == "" then
-    -- if itemRollFrame:IsVisible() then
-      -- itemRollFrame:Hide()
-    -- else
-      -- itemRollFrame:Show()
-    -- end
-  if msg == "help" or msg == "" then
-    lb_print("BRPBT " .. GetAddOnMetadata("BRPBT","Version") .. " is a simple addon that displays sorted item rolls in a frame.")
-    lb_print("Type /bt time <seconds> to set the duration the frame is shown.")
-    lb_print("Type /bt autoClose on/off to enable/disable auto closing the frame after the time has elapsed.")
-    lb_print("Type /bt settings to see the current settings.")
-  elseif msg == "settings" then
-    lb_print("Frame shown duration: " .. FrameShownDuration .. " seconds.")
-    lb_print("Auto closing: " .. (FrameAutoClose and "on" or "off"))
-    lb_print("Master Looter: " .. (state.masterLooter or "unknown"))
-  elseif string.find(msg, "time") then
-    local _,_,newDuration = string.find(msg, "time (%d+)")
-    newDuration = tonumber(newDuration)
-    if newDuration and newDuration > 0 then
-      FrameShownDuration = newDuration
-      lb_print("Roll time set to " .. newDuration .. " seconds.")
-      if IsSenderMasterLooter(UnitName("player")) then
-        SendAddonMessage(LB_PREFIX, LB_SET_ROLL_TIME .. newDuration, GetNumRaidMembers() > 0 and "RAID" or "PARTY")
-      end
-    else
-      lb_print("Invalid duration. Please enter a number greater than 0.")
-    end
-  elseif string.find(msg, "autoclose") then
-    local _,_,autoClose = string.find(msg, "autoclose (%a+)")
-    if autoClose == "on" or autoClose == "true" then
-      lb_print("Auto closing enabled.")
-      FrameAutoClose = true
-    elseif autoClose == "off" or autoClose == "false" then
-      lb_print("Auto closing disabled.")
-      FrameAutoClose = false
-    else
-      lb_print("Invalid option. Please enter 'on' or 'off'.")
-    end
-  else
-  lb_print("Invalid command. Type /lb help for a list of commands.")
-  end
-end

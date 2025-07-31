@@ -1,8 +1,8 @@
 ## Interface: 11200
-## Title: BRP Bid Tracker
+## Title: BRP Bid Helper
 ## Author: Eggorkus
 ## Version: 1.0.0
-## Notes: Make loot rolls obvious
+## Notes: For Beluga
 ## SavedVariables: FrameShownDuration, FrameAutoClose
 
-BRPBT.lua
+BRPBidHelper.lua

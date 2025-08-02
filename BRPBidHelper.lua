@@ -811,7 +811,7 @@ itemRollFrame:RegisterEvent("RAID_ROSTER_UPDATE")
 itemRollFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 itemRollFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 itemRollFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-itemRollFrame:RegisterEvent("CHAT_MSG_WHISPER")
+-- itemRollFrame:RegisterEvent("CHAT_MSG_WHISPER")
 
 -- itemRollFrame:SetScript("OnEvent", function () HandleChatMessage(event,arg1,arg2) end)
 itemRollFrame:SetScript("OnEvent", function ()

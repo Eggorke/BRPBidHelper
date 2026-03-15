@@ -1,5 +1,10 @@
 # BRPBidHelper
 
+Разработано для гильдии **BELUGA** на сервере **Nordanaar, Turtle WoW** | Автор: **Eggorkus**
+Developed for guild **BELUGA** on **Nordanaar, Turtle WoW** | Author: **Eggorkus**
+
+---
+
 Аддон для помощи в рейдовом распределении лута через DKP-систему. Показывает окно с информацией о выставленном предмете, вашим текущим DKP и кнопками для быстрой ставки или ролла.
 
 ## Как работает

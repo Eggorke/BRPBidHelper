@@ -51,6 +51,23 @@ Developed for guild **BELUGA** on **Nordanaar, Turtle WoW** | Author: **Eggorkus
 - DKP должен быть прописан в офицерских заметках в формате `{NAXX:KARA}`
 - Для чтения офицерских заметок нужен доступ к ним
 
+## Настройка меток рейдов
+
+Если в вашей гильдии рейды называются иначе, поправьте две строки в начале файла `BRPBidHelper.lua`:
+
+```lua
+local RAID1_LABEL = "NAXX"   -- первая цифра в заметке {RAID1:RAID2}
+local RAID2_LABEL = "KARA"   -- вторая цифра в заметке {RAID1:RAID2}
+```
+
+Например, для MC и BWL:
+```lua
+local RAID1_LABEL = "MC"
+local RAID2_LABEL = "BWL"
+```
+
+После смены меток — перезагрузить UI (`/reload`). Названия автоматически обновятся на кнопках и в отображении DKP.
+
 ## Настройки (SavedVariables)
 
 - `FrameShownDuration` — сколько секунд показывать окно (по умолчанию 30)

@@ -1,3 +1,10 @@
+﻿-- ============================================================
+-- CONFIGURATION: change raid labels to match your guild
+-- ============================================================
+local RAID1_LABEL = "NAXX"   -- first number in officer note  {RAID1:RAID2}
+local RAID2_LABEL = "KARA"   -- second number in officer note {RAID1:RAID2}
+-- ============================================================
+
 local state = {
   weird_vibes_mode = true,
   rollMessages = {},
@@ -19,7 +26,7 @@ local state = {
 }
 
 StaticPopupDialogs["CONFIRM_ALL_IN_NAXX"] = {
-  text = "Are you sure ebashish NAXX DKP?",
+  text = "Are you sure ebashish " .. RAID1_LABEL .. " DKP?",
   button1 = "Yes",
   button2 = "Ne Ne Ne",
   OnAccept = function()
@@ -32,7 +39,7 @@ StaticPopupDialogs["CONFIRM_ALL_IN_NAXX"] = {
 }
 
 StaticPopupDialogs["CONFIRM_ALL_IN_KARA"] = {
-  text = "Are you sure ebashish KARA DKP?",
+  text = "Are you sure ebashish " .. RAID2_LABEL .. " DKP?",
   button1 = "Yes",
   button2 = "Ne Ne Ne",
   OnAccept = function()
@@ -236,10 +243,10 @@ local function CreateItemRollFrame()
   -- Row 1 (bottom): ALL IN NAXX / ALL IN KARA
   local allInY = BUTTON_PADDING
   local allInW = 120
-  CreateButton(frame, "ALL IN NAXX", "Bid ALL IN NAXX DKP",
+  CreateButton(frame, "ALL IN " .. RAID1_LABEL, "Bid ALL IN " .. RAID1_LABEL .. " DKP",
     ButtonRowX(1, 2, allInW), allInY, allInW,
     function() StaticPopup_Show("CONFIRM_ALL_IN_NAXX") end)
-  CreateButton(frame, "ALL IN KARA", "Bid ALL IN KARA DKP",
+  CreateButton(frame, "ALL IN " .. RAID2_LABEL, "Bid ALL IN " .. RAID2_LABEL .. " DKP",
     ButtonRowX(2, 2, allInW), allInY, allInW,
     function() StaticPopup_Show("CONFIRM_ALL_IN_KARA") end)
 
@@ -406,8 +413,8 @@ local function UpdateTextArea(frame)
   state.kara = gp
 
   text = text .. "Your Rank: " .. bidderRank .. "\n"
-  text = text .. "Your NAXX DKP: " .. ep .. "\n"
-  text = text .. "Your KARA DKP: " .. gp
+  text = text .. "Your " .. RAID1_LABEL .. " DKP: " .. ep .. "\n"
+  text = text .. "Your " .. RAID2_LABEL .. " DKP: " .. gp
 
   frame.textArea:SetText(text)
 end

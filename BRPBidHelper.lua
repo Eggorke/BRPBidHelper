@@ -427,6 +427,12 @@ local function ExtractItemLinksFromMessage(message)
   return itemLinks
 end
 
+local function IsAwardAnnouncement(message)
+  return string.find(message, " wins ") and
+    string.find(message, " for ") and
+    string.find(message, " DKP")
+end
+
 -- Note: only works for player and party members, not full raid
 local function IsSenderMasterLooter(sender)
   local lootMethod, masterLooterPartyID = GetLootMethod()
@@ -518,7 +524,8 @@ function itemRollFrame:CHAT_MSG_RAID_WARNING(message, sender)
   if tsize(links) == 1 then
     if string.find(message, "^No one has nee") or
       string.find(message, "has been sent to") or
-      string.find(message, " received ") then
+      string.find(message, " received ") or
+      IsAwardAnnouncement(message) then
       return
     end
     resetRolls()

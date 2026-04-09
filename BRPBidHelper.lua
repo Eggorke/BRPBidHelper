@@ -19,7 +19,6 @@ local state = {
   msRollCap = 100,
   osRollCap = 99,
   tmogRollCap = 98,
-  MLRollDuration = 30,
   minimumBid = "10",
   naxx = 0,
   kara = 0,
@@ -81,7 +80,6 @@ local colors = {
 local LB_PREFIX = "BRPBT"
 local LB_GET_DATA = "get data"
 local LB_SET_ML = "ML set to "
-local LB_SET_ROLL_TIME = "Roll time set to "
 
 local function lb_print(msg)
   DEFAULT_CHAT_FRAME:AddMessage("|c" .. colors.ADDON_TEXT_COLOR .. "BRPBidHelper: " .. msg .. "|r")
@@ -433,20 +431,6 @@ local function IsAwardAnnouncement(message)
     string.find(message, " DKP")
 end
 
--- Note: only works for player and party members, not full raid
-local function IsSenderMasterLooter(sender)
-  local lootMethod, masterLooterPartyID = GetLootMethod()
-  if lootMethod == "master" and masterLooterPartyID then
-    if masterLooterPartyID == 0 then
-      return sender == UnitName("player")
-    else
-      local masterLooterName = UnitName("party" .. masterLooterPartyID)
-      return masterLooterName == sender
-    end
-  end
-  return false
-end
-
 local function GetMasterLooterInParty()
   local lootMethod, masterLooterPartyID = GetLootMethod()
   if lootMethod == "master" and masterLooterPartyID then
@@ -533,7 +517,7 @@ function itemRollFrame:CHAT_MSG_RAID_WARNING(message, sender)
     UpdateTextArea(itemRollFrame)
     state.time_elapsed = 0
     state.isRolling = true
-    ShowFrame(itemRollFrame, state.MLRollDuration, links[1])
+    ShowFrame(itemRollFrame, FrameShownDuration, links[1])
   end
 end
 
@@ -549,13 +533,10 @@ function itemRollFrame:SendML(masterlooter)
 
   local chan = GetNumRaidMembers() > 0 and "RAID" or "PARTY"
   SendAddonMessage(LB_PREFIX, LB_SET_ML .. masterlooter, chan)
-  if state.masterLooter == UnitName("player") then
-    SendAddonMessage(LB_PREFIX, LB_SET_ROLL_TIME .. FrameShownDuration, chan)
-  end
 end
 
 function itemRollFrame:CHAT_MSG_ADDON(prefix, message, channel, sender)
-  local player = UnitName("player")
+  if prefix ~= LB_PREFIX then return end
 
   if message == LB_GET_DATA then
     self:SendML(GetMasterLooterInParty())
@@ -571,21 +552,6 @@ function itemRollFrame:CHAT_MSG_ADDON(prefix, message, channel, sender)
     return
   end
 
-  if string.find(message, LB_SET_ROLL_TIME) then
-    local _, _, duration = string.find(message, "Roll time set to (%d+)")
-    duration = tonumber(duration)
-    if duration and duration ~= state.MLRollDuration then
-      state.MLRollDuration = duration
-      if not IsSenderMasterLooter(player) then
-        local roll_string = "Roll time set to " .. state.MLRollDuration .. " seconds by Master Looter."
-        if state.MLRollDuration ~= FrameShownDuration then
-          roll_string = roll_string .. " Your display time is " .. FrameShownDuration .. " seconds."
-        end
-        lb_print(roll_string)
-      end
-    end
-    return
-  end
 end
 
 function itemRollFrame:RAID_ROSTER_UPDATE()
